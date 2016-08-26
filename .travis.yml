@@ -4,6 +4,7 @@ rust:
 cache: cargo
 before_script: (cargo install rustfmt || true)
 script:
+  - export PATH=$PATH:/home/travis/.cargo/bin
   - cargo fmt -- --write-mode=diff
   - cargo build --verbose
   - cargo test --verbose
