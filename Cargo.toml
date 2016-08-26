@@ -1,0 +1,7 @@
+[package]
+name = "scanrs"
+version = "0.1.0"
+authors = ["Matt Layher <mdlayher@gmail.com>"]
+
+[dependencies]
+getopts = "*"
