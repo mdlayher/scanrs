@@ -44,13 +44,7 @@ fn main() {
     };
 
     // Parse IPv4 or IPv6 address for scanning
-    let addr = match parse_ip(&matches.free[0]) {
-        Ok(ip) => ip,
-        Err(e) => {
-            println!("error parsing IP address: {}", e.to_string());
-            return;
-        }
-    };
+    let addr = IpAddr::from_str(&matches.free[0]).unwrap();
 
     // Send and receive results via channels of port numbers, scanning
     // concurrently using threads
@@ -102,36 +96,4 @@ fn scan(tx: Sender<u16>, start_port: u16, addr: IpAddr, num_threads: u16) {
 
         port += num_threads;
     }
-}
-
-// parse_ip attempts to parse an input string as an IPv4 or IPv6 address.
-fn parse_ip(addr: &str) -> Result<IpAddr, String> {
-    if let Ok(ip4) = Ipv4Addr::from_str(addr) {
-        return Ok(IpAddr::V4(ip4));
-    }
-
-    if let Ok(ip6) = Ipv6Addr::from_str(addr) {
-        return Ok(IpAddr::V6(ip6));
-    }
-
-    Err(format!("could not parse {} as an IP address", addr).to_string())
-}
-
-#[test]
-fn parse_ip_ok() {
-    let test_ip4 = IpAddr::V4(Ipv4Addr::from_str("192.168.1.1").unwrap());
-    let test_ip6 = IpAddr::V6(Ipv6Addr::from_str("::1").unwrap());
-    let test_bad = "could not parse foobar as an IP address".to_string();
-
-    let ip4 = parse_ip("192.168.1.1").unwrap();
-    assert!(ip4 == test_ip4);
-
-    let ip6 = parse_ip("::1").unwrap();
-    assert!(ip6 == test_ip6);
-
-    let bad = match parse_ip("foobar") {
-        Ok(_) => panic!("foobar is bad input"),
-        Err(e) => e,
-    };
-    assert!(bad == test_bad);
 }
