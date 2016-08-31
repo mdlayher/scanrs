@@ -3,7 +3,7 @@ extern crate getopts;
 use getopts::Options;
 use std::env;
 use std::io::{self, Write};
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, TcpStream};
+use std::net::{IpAddr, TcpStream};
 use std::str::FromStr;
 use std::sync::mpsc::{Sender, channel};
 use std::thread;
@@ -44,11 +44,12 @@ fn main() {
     };
 
     // Parse IPv4 or IPv6 address for scanning
-    let addr = IpAddr::from_str(&matches.free[0]).unwrap();
+    let addr = IpAddr::from_str(&matches.free[0])
+        .expect("IPADDR must be a valid IPv4 or IPv6 address");
 
     // Send and receive results via channels of port numbers, scanning
     // concurrently using threads
-    let (tx, rx) = channel::<u16>();
+    let (tx, rx) = channel();
     for i in 0..num_threads {
         let tx = tx.clone();
 
